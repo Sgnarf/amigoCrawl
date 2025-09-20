@@ -15,12 +15,42 @@ from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
 
 # --- Configuration ---
-# The channels on the PCA9685 where the servos are connected
-SERVO_CHANNELS = [0, 1, 2, 3]
-
-# The pulse width range for the servos (in microseconds)
-# Adjust these values as needed for your specific servos.
-SERVO_PULSE_WIDTHS = (500, 2500)
+# Define a list of dictionaries, where each dictionary represents a servo
+# You can now give each servo a name and specify its own min/max angle and pulse width
+SERVO_CONFIG = [
+    {
+        "name": "Right Shoulder",
+        "channel": 0,
+        "min_pulse": 500,
+        "max_pulse": 2500,
+        "min_angle": 0,
+        "max_angle": 180
+    },
+    {
+        "name": "Left Shoulder",
+        "channel": 1,
+        "min_pulse": 500,
+        "max_pulse": 2500,
+        "min_angle": 0,
+        "max_angle": 180
+    },
+    {
+        "name": "Right Elbow",
+        "channel": 2,
+        "min_pulse": 500,
+        "max_pulse": 2500,
+        "min_angle": 0,
+        "max_angle": 180
+    },
+    {
+        "name": "Left Elbow",
+        "channel": 3,
+        "min_pulse": 500,
+        "max_pulse": 2500,
+        "min_angle": 0,
+        "max_angle": 180
+    },
+]
 
 # --- I2C Bus and PCA9685 Setup ---
 try:
@@ -44,67 +74,74 @@ except Exception as e:
     exit()
 
 # --- Servo Initialization ---
-# Create servo objects for each channel
+# Create servo objects for each channel based on the configuration list
 servos = {}
-for channel in SERVO_CHANNELS:
+for config in SERVO_CONFIG:
     try:
         # Create a servo object for the specified channel and pulse width range
         my_servo = servo.Servo(
-            pca.channels[channel],
-            min_pulse=SERVO_PULSE_WIDTHS[0],
-            max_pulse=SERVO_PULSE_WIDTHS[1]
+            pca.channels[config["channel"]],
+            min_pulse=config["min_pulse"],
+            max_pulse=config["max_pulse"]
         )
-        servos[channel] = my_servo
-        print(f"Servo on channel {channel} initialized.")
+        servos[config["name"]] = {
+            "object": my_servo,
+            "min_angle": config["min_angle"],
+            "max_angle": config["max_angle"]
+        }
+        print(f"Servo '{config['name']}' on channel {config['channel']} initialized.")
     except Exception as e:
-        print(f"Error initializing servo on channel {channel}: {e}")
-        servos[channel] = None
+        print(f"Error initializing servo '{config['name']}' on channel {config['channel']}: {e}")
+        servos[config["name"]] = None
 
 # --- Interactive Control Loop ---
 def interactive_control():
     """
     An interactive function to control a single servo at a time.
     """
+    print("\nAvailable servos:")
+    for name in servos.keys():
+        print(f" - {name}")
+    
     print("\nStarting interactive servo control. Press Ctrl+C to exit.")
     
     while True:
         try:
-            # Get user input for servo channel
-            channel_input = input("\nEnter servo channel (0-3) or 'q' to quit: ")
-            if channel_input.lower() == 'q':
+            # Get user input for servo name
+            name_input = input("\nEnter servo name (e.g., 'Right Shoulder') or 'q' to quit: ")
+            if name_input.lower() == 'q':
                 break
             
-            # Validate the channel input
-            try:
-                channel = int(channel_input)
-                if channel not in SERVO_CHANNELS:
-                    print(f"Error: Invalid channel. Please enter a number between 0 and {len(SERVO_CHANNELS) - 1}.")
-                    continue
-            except ValueError:
-                print("Error: Invalid input. Please enter a number.")
+            # Check if the entered servo name is valid
+            if name_input not in servos:
+                print("Error: Invalid servo name. Please choose from the list above.")
                 continue
 
             # Check if the selected servo was initialized successfully
-            if servos[channel] is None:
-                print(f"Error: Servo on channel {channel} is not available. Please check your connections.")
+            servo_data = servos[name_input]
+            if servo_data is None:
+                print(f"Error: Servo '{name_input}' is not available. Please check your connections.")
                 continue
 
+            min_angle = servo_data["min_angle"]
+            max_angle = servo_data["max_angle"]
+
             # Get user input for the angle
-            angle_input = input(f"Enter desired angle for servo {channel} (0-180): ")
+            angle_input = input(f"Enter desired angle for '{name_input}' ({min_angle}-{max_angle}): ")
             
             # Validate the angle input
             try:
                 angle = int(angle_input)
-                if not 0 <= angle <= 180:
-                    print("Error: Invalid angle. Please enter a number between 0 and 180.")
+                if not min_angle <= angle <= max_angle:
+                    print(f"Error: Invalid angle. Please enter a number between {min_angle} and {max_angle}.")
                     continue
             except ValueError:
                 print("Error: Invalid input. Please enter a number.")
                 continue
 
             # Set the servo angle
-            print(f"Moving servo on channel {channel} to {angle} degrees...")
-            servos[channel].angle = angle
+            print(f"Moving servo '{name_input}' to {angle} degrees...")
+            servo_data["object"].angle = angle
             
         except KeyboardInterrupt:
             # Handle Ctrl+C gracefully
