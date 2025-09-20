@@ -109,6 +109,8 @@ def move_all_servos(angle_map, speed=0.01, steps=10):
                     servos[name].angle = current_angle
                     
                 new_angle = current_angle + (target_angle - current_angle) * (i / steps)
+                # Clamp the new angle to the valid range of 0-180 to prevent errors
+                new_angle = max(0, min(180, new_angle))
                 servos[name].angle = new_angle
         time.sleep(speed)
 
