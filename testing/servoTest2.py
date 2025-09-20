@@ -23,7 +23,7 @@ SERVO_CONFIG = [
         "channel": 0,
         "min_pulse": 500,
         "max_pulse": 2500,
-        "min_angle": 10,
+        "min_angle": 0,
         "max_angle": 180
     },
     {
@@ -31,7 +31,7 @@ SERVO_CONFIG = [
         "channel": 1,
         "min_pulse": 500,
         "max_pulse": 2500,
-        "min_angle": 10,
+        "min_angle": 0,
         "max_angle": 180
     },
     {
