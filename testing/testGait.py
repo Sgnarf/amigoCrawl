@@ -102,11 +102,26 @@ def move_all_servos(angle_map, speed=0.01, steps=10):
         for name, target_angle in angle_map.items():
             if servos[name]:
                 # Calculate the intermediate angle for a smooth transition
-                current_angle = current_angles[name]
+                current_angle = current_angles.get(name)
+                # If the servo has no current angle (first run), set it to the start
+                if current_angle is None:
+                    current_angle = 90 # Start from a neutral position
+                    servos[name].angle = current_angle
+                    
                 new_angle = current_angle + (target_angle - current_angle) * (i / steps)
                 servos[name].angle = new_angle
         time.sleep(speed)
 
+
+def set_neutral_position():
+    """
+    Initializes all servos to a neutral, standing position (90 degrees).
+    """
+    print("\nSetting robot to neutral position...")
+    for s in servos.values():
+        if s:
+            s.angle = 90
+    time.sleep(1) # Wait for servos to settle
 
 def crawling_gait():
     """
@@ -161,4 +176,5 @@ def crawling_gait():
 
 # Run the crawling gait function
 if __name__ == "__main__":
+    set_neutral_position()
     crawling_gait()
