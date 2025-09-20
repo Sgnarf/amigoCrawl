@@ -22,7 +22,7 @@ SERVO_CONFIG = [
         "name": "Right Shoulder",
         "channel": 0,
         "min_pulse": 500,
-        "max_pulse": 3000,
+        "max_pulse": 3500,
         "min_angle": 10,
         "max_angle": 200
     },
