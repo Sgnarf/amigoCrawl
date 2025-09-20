@@ -22,17 +22,17 @@ SERVO_CONFIG = [
         "name": "Right Shoulder",
         "channel": 0,
         "min_pulse": 500,
-        "max_pulse": 3500,
+        "max_pulse": 2500,
         "min_angle": 10,
-        "max_angle": 200
+        "max_angle": 180
     },
     {
         "name": "Left Shoulder",
         "channel": 1,
         "min_pulse": 500,
         "max_pulse": 2500,
-        "min_angle": 0,
-        "max_angle": 200
+        "min_angle": 10,
+        "max_angle": 180
     },
     {
         "name": "Right Elbow",
@@ -40,7 +40,7 @@ SERVO_CONFIG = [
         "min_pulse": 500,
         "max_pulse": 2500,
         "min_angle": 0,
-        "max_angle": 200
+        "max_angle": 180
     },
     {
         "name": "Left Elbow",
@@ -48,7 +48,7 @@ SERVO_CONFIG = [
         "min_pulse": 500,
         "max_pulse": 2500,
         "min_angle": 0,
-        "max_angle": 200
+        "max_angle": 180
     },
 ]
 
