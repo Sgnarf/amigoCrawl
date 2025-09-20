@@ -98,6 +98,7 @@ def move_all_servos(angle_map, speed=0.01, steps=10):
     """
     current_angles = {name: servos[name].angle for name in angle_map.keys()}
     
+    print("\nStarting smooth movement...")
     for i in range(steps + 1):
         for name, target_angle in angle_map.items():
             if servos[name]:
@@ -111,8 +112,12 @@ def move_all_servos(angle_map, speed=0.01, steps=10):
                 new_angle = current_angle + (target_angle - current_angle) * (i / steps)
                 # Clamp the new angle to the valid range of 0-180 to prevent errors
                 new_angle = max(0, min(180, new_angle))
+                
                 servos[name].angle = new_angle
+                # Print the new angle for debugging
+                print(f"  --> Step {i}: Setting '{name}' to {new_angle:.2f} degrees")
         time.sleep(speed)
+    print("Smooth movement complete.")
 
 
 def set_neutral_position():
@@ -124,6 +129,7 @@ def set_neutral_position():
         if s:
             s.angle = 90
     time.sleep(1) # Wait for servos to settle
+    print("Neutral position set.")
 
 def crawling_gait():
     """
@@ -140,14 +146,17 @@ def crawling_gait():
             print("Phase 1: Swinging right arm forward...")
             
             # Lift the right elbow to prepare for the swing
+            print("Moving Right Elbow UP...")
             move_all_servos({"Right Elbow": SERVO_CONFIG[2]["up_angle"]})
             time.sleep(step_delay)
 
             # Swing the right shoulder forward
+            print("Moving Right Shoulder FORWARD...")
             move_all_servos({"Right Shoulder": SERVO_CONFIG[0]["forward_angle"]})
             time.sleep(step_delay)
 
             # Lower the right elbow to place the arm on the ground
+            print("Moving Right Elbow DOWN...")
             move_all_servos({"Right Elbow": SERVO_CONFIG[2]["down_angle"]})
             time.sleep(step_delay)
 
@@ -155,14 +164,17 @@ def crawling_gait():
             print("Phase 2: Swinging left arm forward...")
             
             # Lift the left elbow to prepare for the swing
+            print("Moving Left Elbow UP...")
             move_all_servos({"Left Elbow": SERVO_CONFIG[3]["up_angle"]})
             time.sleep(step_delay)
 
             # Swing the left shoulder forward
+            print("Moving Left Shoulder FORWARD...")
             move_all_servos({"Left Shoulder": SERVO_CONFIG[1]["forward_angle"]})
             time.sleep(step_delay)
 
             # Lower the left elbow to place the arm on the ground
+            print("Moving Left Elbow DOWN...")
             move_all_servos({"Left Elbow": SERVO_CONFIG[3]["down_angle"]})
             time.sleep(step_delay)
             
