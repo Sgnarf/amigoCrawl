@@ -10,10 +10,10 @@ from adafruit_pca9685 import PCA9685
 # Dictionary of servo configs: channel -> (min, max)
 # Adjust values depending on your specific motors
 SERVOS = {
-    "right_shoulder": {"channel": 0, "min": 1000, "max": 2000},  
-    "left_shoulder":  {"channel": 1, "min": 1000, "max": 2000},
-    "left_elbow":     {"channel": 3, "min": 1000, "max": 2000},
-    "right_elbow":    {"channel": 2, "min": 1000, "max": 2000},
+    "right_shoulder": {"channel": 0, "min": 500, "max": 2500},  
+    "left_shoulder":  {"channel": 1, "min": 500, "max": 2500},
+    "left_elbow":     {"channel": 3, "min": 500, "max": 2500},
+    "right_elbow":    {"channel": 2, "min": 500, "max": 2500},
 }
 
 pca = None  # global handle to PCA9685
