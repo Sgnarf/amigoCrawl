@@ -142,18 +142,18 @@ def turn_right_cycle(delay):
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
-    # Phase 5: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
-    time.sleep(delay)
-
 def turn_right(steps, delay):
     """Run several turn rigth cycles cycles"""
     for i in range(steps):
         print(f"Step {i+1}/{steps}")
         turn_right_cycle(delay)
+
+    # Final Reset
+    set_servo_angle("left_shoulder", 40)
+    set_servo_angle("right_shoulder", 140)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
+    time.sleep(delay)
 
 def turn_left_cycle(delay):
     """Pin the left arm and use the right to turn"""
@@ -179,18 +179,18 @@ def turn_left_cycle(delay):
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
-    # Phase 5: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
-    time.sleep(delay)
-
 def turn_left(steps, delay):
     """Run several turn rigth cycles cycles"""
     for i in range(steps):
         print(f"Step {i+1}/{steps}")
         turn_left_cycle(delay)
+
+    # Reset: Arms forward + elbows up
+    set_servo_angle("left_shoulder", 40)
+    set_servo_angle("right_shoulder", 140)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
+    time.sleep(delay)
 
 
 
