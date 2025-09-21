@@ -64,7 +64,7 @@ def cleanup():
 # Servo testing
 # -----------------------
 
-def test_servos(delay=3.0):
+def test_servos(delay=1.0):
     """Move all servos through some test positions"""
     for name in SERVOS:
         print(f"Testing {name}...")
@@ -86,29 +86,29 @@ def test_servos(delay=3.0):
 # Gait definition
 # -----------------------
 
-def stroke_cycle(delay=0.3):
+def stroke_cycle(delay=3.0):
     """One breaststroke-like cycle"""
 
     # Phase 1: Arms forward + elbows up
     set_servo_angle("left_shoulder", 60)
-    set_servo_angle("right_shoulder", 60)
-    set_servo_angle("left_elbow", 120)
-    set_servo_angle("right_elbow", 120)
+    set_servo_angle("right_shoulder", 120)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
     # Phase 2: Elbows down (grip ground)
-    set_servo_angle("left_elbow", 60)
-    set_servo_angle("right_elbow", 60)
+    set_servo_angle("left_elbow", 180)
+    set_servo_angle("right_elbow", 0)
     time.sleep(delay)
 
     # Phase 3: Shoulders pull back
     set_servo_angle("left_shoulder", 120)
-    set_servo_angle("right_shoulder", 120)
+    set_servo_angle("right_shoulder", 60)
     time.sleep(delay)
 
     # Phase 4: Elbows up (reset)
-    set_servo_angle("left_elbow", 120)
-    set_servo_angle("right_elbow", 120)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
 
@@ -127,8 +127,8 @@ if __name__ == "__main__":
     try:
         init_servos()
         test_servos()
-        #print("Walking forward...")
-        #walk_forward(steps=2, delay=0.4)
+        print("Walking forward...")
+        walk_forward(steps=2, delay=0.4)
     finally:
         # Always release motors on exit
         cleanup()
