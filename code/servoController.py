@@ -86,7 +86,7 @@ def test_servos(delay=1.0):
 # Gait definition
 # -----------------------
 
-def stroke_cycle(delay=3.0):
+def stroke_cycle(delay=1.0):
     """One breaststroke-like cycle"""
 
     # Phase 1: Arms forward + elbows up
