@@ -118,7 +118,7 @@ def walk_forward(steps, delay):
         print(f"Step {i+1}/{steps}")
         stroke_cycle(delay)
 
-def turn_right(delay):
+def turn_right_cycle(delay):
     """Pin the right arm and use the left to turn"""
 
     # Phase 1: Arms forward + elbows up
@@ -142,6 +142,11 @@ def turn_right(delay):
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
+def turn_right(steps, delay):
+    """Run several turn rigth cycles cycles"""
+    for i in range(steps):
+        print(f"Step {i+1}/{steps}")
+        turn_right_cycle(delay)
 
 
 # -----------------------
@@ -154,8 +159,7 @@ if __name__ == "__main__":
         #test_servos(delay = 1)
         print("Walking forward...")
         #walk_forward(steps=3, delay=0.8)
-        turn_right(delay = 1)
-        turn_right(delay = 1)
+        turn_right(steps = 3, delay = 1)
     finally:
         # Always release motors on exit
         cleanup()
