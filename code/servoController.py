@@ -128,7 +128,7 @@ if __name__ == "__main__":
         init_servos()
         #test_servos(delay = 1)
         print("Walking forward...")
-        walk_forward(steps=1, delay=0.8)
+        walk_forward(steps=3, delay=0.8)
     finally:
         # Always release motors on exit
         cleanup()
