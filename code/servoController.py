@@ -142,6 +142,13 @@ def turn_right_cycle(delay):
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
 
+    # Phase 5: Arms forward + elbows up
+    set_servo_angle("left_shoulder", 40)
+    set_servo_angle("right_shoulder", 140)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
+    time.sleep(delay)
+
 def turn_right(steps, delay):
     """Run several turn rigth cycles cycles"""
     for i in range(steps):
@@ -168,6 +175,13 @@ def turn_left_cycle(delay):
     time.sleep(delay)
 
     # Phase 4: Elbows up (reset)
+    set_servo_angle("left_elbow", 90)
+    set_servo_angle("right_elbow", 90)
+    time.sleep(delay)
+
+    # Phase 5: Arms forward + elbows up
+    set_servo_angle("left_shoulder", 40)
+    set_servo_angle("right_shoulder", 140)
     set_servo_angle("left_elbow", 90)
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
