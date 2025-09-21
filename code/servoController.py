@@ -97,8 +97,8 @@ def stroke_cycle(delay=3.0):
     time.sleep(delay)
 
     # Phase 2: Elbows down (grip ground)
-    set_servo_angle("left_elbow", 0)
-    set_servo_angle("right_elbow", 180)
+    set_servo_angle("left_elbow", 20)
+    set_servo_angle("right_elbow", 160)
     time.sleep(delay)
 
     # Phase 3: Shoulders pull back
