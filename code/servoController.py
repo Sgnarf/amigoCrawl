@@ -8,10 +8,10 @@ from adafruit_pca9685 import PCA9685
 # -----------------------
 
 SERVOS = {
-    "left_shoulder":  {"channel": 1, "min": 150, "max": 600},
-    "left_elbow":     {"channel": 3, "min": 200, "max": 550},
     "right_shoulder": {"channel": 0, "min": 150, "max": 600},
+    "left_shoulder":  {"channel": 1, "min": 150, "max": 600},
     "right_elbow":    {"channel": 2, "min": 200, "max": 550},
+    "left_elbow":     {"channel": 3, "min": 200, "max": 550},
 }
 
 pca = None  # global PCA9685 handle
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     try:
         init_servos()
         test_servos()
-        print("Walking forward...")
-        walk_forward(steps=10, delay=0.4)
+        #print("Walking forward...")
+        #walk_forward(steps=2, delay=0.4)
     finally:
         # Always release motors on exit
         cleanup()
