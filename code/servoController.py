@@ -8,7 +8,7 @@ from adafruit_pca9685 import PCA9685
 # -----------------------
 
 SERVOS = {
-    "right_shoulder": {"channel": 0, "min": 50, "max": 800},
+    "right_shoulder": {"channel": 0, "min": 100, "max": 900},
     "left_shoulder":  {"channel": 1, "min": 150, "max": 600},
     "right_elbow":    {"channel": 2, "min": 200, "max": 550},
     "left_elbow":     {"channel": 3, "min": 200, "max": 550},
