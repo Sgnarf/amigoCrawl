@@ -112,7 +112,7 @@ def stroke_cycle(delay=0.5):
     time.sleep(delay)
 
 
-def walk_forward(steps=5, delay=0.3):
+def walk_forward(steps=5, delay=1):
     """Run several stroke cycles"""
     for i in range(steps):
         print(f"Step {i+1}/{steps}")
