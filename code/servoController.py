@@ -64,7 +64,7 @@ def cleanup():
 # Servo testing
 # -----------------------
 
-def test_servos(delay=1.0):
+def test_servos(delay):
     """Move all servos through some test positions"""
     for name in SERVOS:
         print(f"Testing {name}...")
@@ -86,7 +86,7 @@ def test_servos(delay=1.0):
 # Gait definition
 # -----------------------
 
-def stroke_cycle(delay=0.5):
+def stroke_cycle(delay):
     """One breaststroke-like cycle"""
 
     # Phase 1: Arms forward + elbows up
@@ -112,7 +112,7 @@ def stroke_cycle(delay=0.5):
     time.sleep(delay)
 
 
-def walk_forward(steps=5, delay=1):
+def walk_forward(steps, delay):
     """Run several stroke cycles"""
     for i in range(steps):
         print(f"Step {i+1}/{steps}")
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         init_servos()
         #test_servos()
         print("Walking forward...")
-        walk_forward(steps=3, delay=0.3)
+        walk_forward(steps=3, delay=0.8)
     finally:
         # Always release motors on exit
         cleanup()
