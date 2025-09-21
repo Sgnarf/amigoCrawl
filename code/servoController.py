@@ -64,17 +64,21 @@ def cleanup():
 # Servo testing
 # -----------------------
 
-def test_servos(delay=0.5):
+def test_servos(delay=3.0):
     """Move all servos through some test positions"""
     for name in SERVOS:
         print(f"Testing {name}...")
         set_servo_angle(name, 0)
+        print((f"Testing {name} at 0")
         time.sleep(delay)
         set_servo_angle(name, 90)
+        print((f"Testing {name} at 90")
         time.sleep(delay)
         set_servo_angle(name, 180)
+        print((f"Testing {name} at 180")
         time.sleep(delay)
         set_servo_angle(name, 90)
+        print((f"Testing {name} at 90")
         time.sleep(delay)
 
 
