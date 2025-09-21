@@ -86,7 +86,7 @@ def test_servos(delay=1.0):
 # Gait definition
 # -----------------------
 
-def stroke_cycle(delay=1.0):
+def stroke_cycle(delay=0.5):
     """One breaststroke-like cycle"""
 
     # Phase 1: Arms forward + elbows up
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         init_servos()
         #test_servos()
         print("Walking forward...")
-        walk_forward(steps=3, delay=1)
+        walk_forward(steps=3, delay=0.3)
     finally:
         # Always release motors on exit
         cleanup()
