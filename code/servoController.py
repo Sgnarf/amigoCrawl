@@ -90,8 +90,8 @@ def stroke_cycle(delay=3.0):
     """One breaststroke-like cycle"""
 
     # Phase 1: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 60)
-    set_servo_angle("right_shoulder", 120)
+    set_servo_angle("left_shoulder", 40)
+    set_servo_angle("right_shoulder", 140)
     set_servo_angle("left_elbow", 90)
     set_servo_angle("right_elbow", 90)
     time.sleep(delay)
@@ -102,8 +102,8 @@ def stroke_cycle(delay=3.0):
     time.sleep(delay)
 
     # Phase 3: Shoulders pull back
-    set_servo_angle("left_shoulder", 120)
-    set_servo_angle("right_shoulder", 60)
+    set_servo_angle("left_shoulder", 140)
+    set_servo_angle("right_shoulder", 40)
     time.sleep(delay)
 
     # Phase 4: Elbows up (reset)
