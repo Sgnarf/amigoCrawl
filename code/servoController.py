@@ -7,16 +7,14 @@ from adafruit_pca9685 import PCA9685
 # Servo setup
 # -----------------------
 
-# Dictionary of servo configs: channel -> (min, max)
-# Adjust values depending on your specific motors
 SERVOS = {
-    "right_shoulder": {"channel": 0, "min": 500, "max": 2500},  
-    "left_shoulder":  {"channel": 1, "min": 500, "max": 2500},
-    "left_elbow":     {"channel": 3, "min": 500, "max": 2500},
-    "right_elbow":    {"channel": 2, "min": 500, "max": 2500},
+    "left_shoulder":  {"channel": 0, "min": 150, "max": 600},
+    "left_elbow":     {"channel": 1, "min": 200, "max": 550},
+    "right_shoulder": {"channel": 2, "min": 150, "max": 600},
+    "right_elbow":    {"channel": 3, "min": 200, "max": 550},
 }
 
-pca = None  # global handle to PCA9685
+pca = None  # global PCA9685 handle
 
 
 def init_servos(address=0x40, freq=50):
@@ -39,9 +37,32 @@ def set_servo_angle(servo_name, angle):
     """Move a servo to a given angle"""
     cfg = SERVOS[servo_name]
     pulse = angle_to_pwm(angle, servo_name)
-    # PCA9685 expects 16-bit duty cycle (0–65535)
-    pca.channels[cfg["channel"]].duty_cycle = pulse << 4
+    pca.channels[cfg["channel"]].duty_cycle = pulse << 4  # 12-bit value shifted
 
+
+def release_servo(servo_name):
+    """Stop sending PWM to one servo (relaxes it)"""
+    cfg = SERVOS[servo_name]
+    pca.channels[cfg["channel"]].duty_cycle = 0
+
+
+def release_all_servos():
+    """Stop all servos"""
+    for name in SERVOS:
+        release_servo(name)
+    print("All servos released.")
+
+
+def cleanup():
+    """Release all servos and turn off PCA9685"""
+    release_all_servos()
+    pca.deinit()
+    print("PCA9685 deinitialized.")
+
+
+# -----------------------
+# Servo testing
+# -----------------------
 
 def test_servos(delay=0.5):
     """Move all servos through some test positions"""
@@ -62,9 +83,8 @@ def test_servos(delay=0.5):
 # -----------------------
 
 def stroke_cycle(delay=0.3):
-    """
-    Defines one breaststroke-like cycle
-    """
+    """One breaststroke-like cycle"""
+
     # Phase 1: Arms forward + elbows up
     set_servo_angle("left_shoulder", 60)
     set_servo_angle("right_shoulder", 60)
@@ -100,7 +120,11 @@ def walk_forward(steps=5, delay=0.3):
 # -----------------------
 
 if __name__ == "__main__":
-    init_servos()
-    test_servos()
-    print("Walking forward...")
-    walk_forward(steps=10, delay=0.4)
+    try:
+        init_servos()
+        test_servos()
+        print("Walking forward...")
+        walk_forward(steps=10, delay=0.4)
+    finally:
+        # Always release motors on exit
+        cleanup()
