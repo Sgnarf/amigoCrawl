@@ -60,6 +60,40 @@ def cleanup():
     print("PCA9685 deinitialized.")
 
 
+
+# -----------------------
+# Helpers for symmetry
+# -----------------------
+
+def mirror_angle(angle):
+    """Mirror an angle around 90° (for specular left/right arms)"""
+    return 180 - angle
+
+
+def set_shoulders(left_angle, symmetric=True):
+    """Move shoulders. If symmetric, mirror right from left"""
+    if symmetric:
+        set_servo_angle("left_shoulder", left_angle)
+        set_servo_angle("right_shoulder", mirror_angle(left_angle))
+    else:
+        l, r = left_angle
+        set_servo_angle("left_shoulder", l)
+        set_servo_angle("right_shoulder", r)
+
+
+def set_elbows(left_angle, symmetric=True):
+    """Move elbows. If symmetric, mirror right from left"""
+    if symmetric:
+        set_servo_angle("left_elbow", left_angle)
+        set_servo_angle("right_elbow", mirror_angle(left_angle))
+    else:
+        l, r = left_angle
+        set_servo_angle("left_elbow", l)
+        set_servo_angle("right_elbow", r)
+
+
+
+
 # -----------------------
 # Servo testing
 # -----------------------
@@ -68,130 +102,96 @@ def test_servos(delay):
     """Move all servos through some test positions"""
     for name in SERVOS:
         print(f"Testing {name}...")
-        set_servo_angle(name, 0)
-        print("Testing at 0°")
-        time.sleep(delay)
-        set_servo_angle(name, 90)
-        print("Testing at 90°")
-        time.sleep(delay)
-        set_servo_angle(name, 180)
-        print("Testing at 180°")
-        time.sleep(delay)
-        set_servo_angle(name, 90)
-        print("Testing at 90°")
-        time.sleep(delay)
+        for angle in (0, 90, 180, 90):
+            set_servo_angle(name, angle)
+            print(f"{name} at {angle}°")
+            time.sleep(delay)
 
 
 # -----------------------
 # Gait definition
 # -----------------------
 
+# -----------------------
+# Gait definitions
+# -----------------------
+
 def stroke_cycle(delay):
-    """One breaststroke-like cycle"""
-
-    # Phase 1: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
+    """One symmetric breaststroke-like cycle"""
+    # Phase 1: arms forward + elbows up
+    set_shoulders(40)
+    set_elbows(90)
     time.sleep(delay)
 
-    # Phase 2: Elbows down (grip ground)
-    set_servo_angle("left_elbow", 20)
-    set_servo_angle("right_elbow", 160)
+    # Phase 2: elbows down (grip)
+    set_elbows(20)
     time.sleep(delay)
 
-    # Phase 3: Shoulders pull back
-    set_servo_angle("left_shoulder", 140)
-    set_servo_angle("right_shoulder", 40)
+    # Phase 3: shoulders pull back
+    set_shoulders(140)
     time.sleep(delay)
 
-    # Phase 4: Elbows up (reset)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
+    # Phase 4: elbows up (reset)
+    set_elbows(90)
     time.sleep(delay)
 
 
 def walk_forward(steps, delay):
-    """Run several stroke cycles"""
     for i in range(steps):
         print(f"Step {i+1}/{steps}")
         stroke_cycle(delay)
 
-def turn_right_cycle(delay):
-    """Pin the right arm and use the left to turn"""
-
-    # Phase 1: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
-    time.sleep(delay)
-
-    # Phase 2: Elbows down (grip ground)
-    set_servo_angle("left_elbow", 20)
-    set_servo_angle("right_elbow", 160)
-    time.sleep(delay)
-
-    # Phase 3: Shoulders pull back
-    set_servo_angle("left_shoulder", 140)
-    time.sleep(delay)
-
-    # Phase 4: Elbows up (reset)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
-    time.sleep(delay)
-
-def turn_right(steps, delay):
-    """Run several turn rigth cycles cycles"""
-    for i in range(steps):
-        print(f"Step {i+1}/{steps}")
-        turn_right_cycle(delay)
-
-    # Final Reset
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
-    time.sleep(delay)
 
 def turn_left_cycle(delay):
-    """Pin the left arm and use the right to turn"""
-
-    # Phase 1: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
+    """Pin left arm, move right arm"""
+    set_shoulders((40, 140), symmetric=False)
+    set_elbows(90)
     time.sleep(delay)
 
-    # Phase 2: Elbows down (grip ground)
-    set_servo_angle("left_elbow", 20)
-    set_servo_angle("right_elbow", 160)
+    set_elbows((20, 160), symmetric=False)
     time.sleep(delay)
 
-    # Phase 3: Shoulders pull back
     set_servo_angle("right_shoulder", 40)
     time.sleep(delay)
 
-    # Phase 4: Elbows up (reset)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
+    set_elbows(90)
     time.sleep(delay)
+
 
 def turn_left(steps, delay):
-    """Run several turn rigth cycles cycles"""
     for i in range(steps):
-        print(f"Step {i+1}/{steps}")
+        print(f"Turn step {i+1}/{steps}")
         turn_left_cycle(delay)
-
-    # Reset: Arms forward + elbows up
-    set_servo_angle("left_shoulder", 40)
-    set_servo_angle("right_shoulder", 140)
-    set_servo_angle("left_elbow", 90)
-    set_servo_angle("right_elbow", 90)
+    # reset pose
+    set_shoulders(40)
+    set_elbows(90)
     time.sleep(delay)
 
+
+def turn_right_cycle(delay):
+    """Pin right arm, move left arm"""
+    set_shoulders((40, 140), symmetric=False)
+    set_elbows(90)
+    time.sleep(delay)
+
+    set_elbows((20, 160), symmetric=False)
+    time.sleep(delay)
+
+    set_servo_angle("left_shoulder", 140)
+    time.sleep(delay)
+
+    set_elbows(90)
+    time.sleep(delay)
+
+
+def turn_right(steps, delay):
+    for i in range(steps):
+        print(f"Turn step {i+1}/{steps}")
+        turn_right_cycle(delay)
+    # reset pose
+    set_shoulders(40)
+    set_elbows(90)
+    time.sleep(delay)
 
 
 # -----------------------
@@ -201,11 +201,10 @@ def turn_left(steps, delay):
 if __name__ == "__main__":
     try:
         init_servos()
-        #test_servos(delay = 1)
+        # test_servos(delay=1)
         print("Walking forward...")
-        #walk_forward(steps=3, delay=0.8)
-        #turn_right(steps = 3, delay = 1)
-        turn_left(steps = 3, delay = 1)
+        walk_forward(steps=3, delay=0.8)
+        # turn_right(steps=3, delay=1)
+        # turn_left(steps=3, delay=1)
     finally:
-        # Always release motors on exit
         cleanup()
