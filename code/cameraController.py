@@ -1,9 +1,10 @@
 from picamera2 import Picamera2
+from libcamera import Transform
 from time import sleep
 
 # --- Configuration ---
 OUTPUT_FILENAME = "capture.jpg"
-WARMUP_TIME = 2       # Seconds to wait for the camera to adjust
+WARMUP_TIME = 2        # Seconds to wait for the camera to adjust
 
 # --- Script ---
 try:
@@ -13,8 +14,17 @@ try:
     picam2 = Picamera2()
 
     # 2. Configure for still images
-    config = picam2.create_still_configuration()
-   
+    # *****************************************************************
+    # MODIFICATION HERE: Use the 'transform' argument in create_still_configuration
+    # We use 'Transform(vflip=True, hflip=True)' which results in 180 degrees rotation.
+    # Alternatively, for explicit rotation, we could use the libcamera.Transform class.
+    # We must import 'Transform' from 'libcamera'.
+    
+    # Transformation: 180 degrees is equivalent to a vertical flip (vflip) AND a 
+    # horizontal flip (hflip).
+    config = picam2.create_still_configuration(transform=Transform(vflip=True, hflip=True))
+    # *****************************************************************
+
     # Apply the configuration and start the camera
     picam2.configure(config)
     picam2.start()
@@ -22,6 +32,7 @@ try:
     print(f"Camera started. Waiting {WARMUP_TIME} seconds for sensor warm-up...")
     sleep(WARMUP_TIME)
 
+    # Note: The rotation is now applied by the camera system *before* capture.
     print(f"Capturing image and saving to {OUTPUT_FILENAME} with 180 degree rotation...")
     
     # Capture the image
