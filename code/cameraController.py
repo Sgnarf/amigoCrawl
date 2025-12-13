@@ -13,7 +13,7 @@ try:
     picam2 = Picamera2()
 
     # 2. Configure for still images
-    config = picam2.create_still_configuration(hflip=1, vflip=1)
+    config = picam2.create_still_configuration()
    
     # Apply the configuration and start the camera
     picam2.configure(config)
