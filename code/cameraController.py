@@ -1,23 +1,45 @@
-import subprocess
-import cv2
-import os
+from picamera2 import Picamera2
+from time import sleep
 
-def capture_image(filename="image.jpg"):
-    # Use libcamera-still to capture image from the RPi5 camera
-    # --nopreview avoids opening a window
-    result = subprocess.run(["libcamera-still", "-o", filename, "--nopreview"], capture_output=True)
-    if result.returncode != 0:
-        raise RuntimeError(f"libcamera-still failed:\n{result.stderr.decode()}")
-    if not os.path.exists(filename):
-        raise RuntimeError("Image file not created.")
+# --- Configuration ---
+OUTPUT_FILENAME = "rotated_image.jpg"
+ROTATION_ANGLE = 180  # We want a 180 degree rotation
+WARMUP_TIME = 2       # Seconds to wait for the camera to adjust
+
+# --- Script ---
+try:
+    print("Starting Picamera2...")
+    picam2 = Picamera2()
+
+    # Get the default configuration for still images
+    config = picam2.create_still_configuration()
+
+    # Apply the rotation to the configuration.
+    # The 'transform' parameter controls image manipulation,
+    # and 'vflip' (Vertical Flip) and 'hflip' (Horizontal Flip) together
+    # achieve a 180 degree rotation.
+    config["transform"] = picam2.Transform(vflip=True, hflip=True)
     
-    # Read captured image with OpenCV
-    img = cv2.imread(filename)
-    if img is None:
-        raise RuntimeError("Failed to load captured image with OpenCV.")
-    return img
+    # Start the camera with the specified configuration
+    picam2.configure(config)
+    picam2.start()
 
-if __name__ == "__main__":
-    image = capture_image("image.jpg")
-    print("Captured image.jpg successfully!")
-    print("Image shape:", image.shape)
+    print(f"Camera started. Waiting {WARMUP_TIME} seconds for sensor warm-up...")
+    sleep(WARMUP_TIME)
+
+    print(f"Capturing image and saving to {OUTPUT_FILENAME} with {ROTATION_ANGLE} degree rotation...")
+    
+    # Capture the image. Since the rotation is applied in the config, 
+    # the saved file will already be oriented correctly.
+    picam2.capture_file(OUTPUT_FILENAME)
+
+    print(f"Successfully captured and saved {OUTPUT_FILENAME}.")
+
+except Exception as e:
+    print(f"An error occurred: {e}")
+
+finally:
+    # Always ensure the camera is stopped
+    if 'picam2' in locals() and picam2.started:
+        print("Stopping camera...")
+        picam2.stop()
