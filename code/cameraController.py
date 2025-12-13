@@ -1,23 +1,20 @@
-from picamera2 import Picamera2
+import cv2
 import time
 
-# Initialize the camera
-picam2 = Picamera2()
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
-# Configure for still image
-camera_config = picam2.create_still_configuration()
-picam2.configure(camera_config)
+if not cap.isOpened():
+    raise RuntimeError("Camera not accessible")
 
-# Start the camera
-picam2.start()
-
-# Give the camera time to warm up
+# Warm-up
 time.sleep(2)
 
-# Take a picture
-picam2.capture_file("image.jpg")
+ret, frame = cap.read()
+if not ret:
+    raise RuntimeError("Failed to capture image")
 
-# Stop the camera
-picam2.stop()
+cv2.imwrite("image.jpg", frame)
+cap.release()
 
-print("Picture saved as image.jpg")
+print("Saved image.jpg")
+
