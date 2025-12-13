@@ -1,48 +1,23 @@
+import subprocess
 import cv2
 import os
-import time
 
-def find_camera_device():
-    """
-    Find the correct /dev/video* device for the RP1-CFE camera.
-    Returns the device path or raises RuntimeError if none found.
-    """
-    video_devices = [f"/dev/{d}" for d in os.listdir("/dev") if d.startswith("video")]
-    for dev in video_devices:
-        cap = cv2.VideoCapture(dev, cv2.CAP_V4L2)
-        if cap.isOpened():
-            # Try reading one frame to confirm it works
-            ret, frame = cap.read()
-            cap.release()
-            if ret and frame is not None:
-                return dev
-    raise RuntimeError("No working camera device found.")
-
-def capture_image(device, filename="image.jpg", width=1280, height=720):
-    cap = cv2.VideoCapture(device, cv2.CAP_V4L2)
-    if not cap.isOpened():
-        raise RuntimeError(f"Cannot open camera {device}")
-
-    # Set resolution
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-
-    # Warm-up frames
-    for _ in range(10):
-        ret, frame = cap.read()
-        if ret and frame is not None:
-            time.sleep(0.05)
-
-    # Capture final frame
-    ret, frame = cap.read()
-    cap.release()
-    if not ret or frame is None:
-        raise RuntimeError("Failed to capture image after warm-up")
-
-    cv2.imwrite(filename, frame)
-    print(f"Saved {filename} from {device}")
+def capture_image(filename="image.jpg"):
+    # Use libcamera-still to capture image from the RPi5 camera
+    # --nopreview avoids opening a window
+    result = subprocess.run(["libcamera-still", "-o", filename, "--nopreview"], capture_output=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"libcamera-still failed:\n{result.stderr.decode()}")
+    if not os.path.exists(filename):
+        raise RuntimeError("Image file not created.")
+    
+    # Read captured image with OpenCV
+    img = cv2.imread(filename)
+    if img is None:
+        raise RuntimeError("Failed to load captured image with OpenCV.")
+    return img
 
 if __name__ == "__main__":
-    device = find_camera_device()
-    capture_image(device)
-
+    image = capture_image("image.jpg")
+    print("Captured image.jpg successfully!")
+    print("Image shape:", image.shape)
