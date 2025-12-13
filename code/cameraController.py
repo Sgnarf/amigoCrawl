@@ -1,8 +1,8 @@
-from picamera2 import Picamera2, Transform
+from picamera2 import Picamera2
 from time import sleep
 
 # --- Configuration ---
-OUTPUT_FILENAME = "rotated_image.jpg"
+OUTPUT_FILENAME = "capture.jpg"
 WARMUP_TIME = 2       # Seconds to wait for the camera to adjust
 
 # --- Script ---
@@ -14,11 +14,7 @@ try:
 
     # 2. Configure for still images
     config = picam2.create_still_configuration()
-
-    # 3. FIX: Access Transform directly from the Picamera2 class 
-    #         to apply the 180 degree rotation (vflip=True and hflip=True).
-    config["transform"] = Picamera2.Transform(vflip=True, hflip=True)
-    
+   
     # Apply the configuration and start the camera
     picam2.configure(config)
     picam2.start()
