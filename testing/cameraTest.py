@@ -3,7 +3,8 @@ from libcamera import Transform
 from time import sleep
 
 # --- Configuration ---
-OUTPUT_FILENAME = "capture.jpg"
+OUTPUT_DIR = "../visionOutput"
+OUTPUT_FILENAME = f"{OUTPUT_DIR}/capture.jpg"
 WARMUP_TIME = 2        # Seconds to wait for the camera to adjust
 
 # --- Script ---
